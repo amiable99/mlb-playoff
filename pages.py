@@ -1,6 +1,7 @@
 """MLB 포스트시즌 대진표 - 서버 렌더링 페이지."""
 import datetime
 import html
+import json
 import re
 
 from teams import DIVISION_KO, KOREAN_PLAYERS_KO, LEAGUE_KO, ROSTER_STATUS_KO, TEAM_INFO
@@ -134,6 +135,16 @@ def layout(title, desc, body, path, base_url, active="", hero_title="", hero_sub
     og_url = f'<meta property="og:url" content="{esc(base_url + path)}">' if base_url else ""
     nav = "".join(f'<a href="{href}"{" class=on" if href == active else ""}>{esc(label)}</a>' for href, label in NAV)
     upd = f'<p class="updated">기준 시각 <span>{esc(updated)}</span></p>' if updated else ""
+    json_ld = ""
+    if base_url:
+        json_ld = "<script type=\"application/ld+json\">" + json.dumps({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": SITE_NAME,
+            "alternateName": "MLB 포스트시즌 토너먼트",
+            "url": base_url + "/",
+            "inLanguage": "ko",
+        }, ensure_ascii=False) + "</script>"
     return f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -147,6 +158,7 @@ def layout(title, desc, body, path, base_url, active="", hero_title="", hero_sub
     <meta property="og:title" content="{esc(title)}">
     <meta property="og:description" content="{esc(desc)}">
     {og_url}
+    {json_ld}
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
     <link rel="stylesheet" href="/static/style.css">
@@ -250,7 +262,7 @@ def home_page(payload, base_url):
      아직 정해지지 않았다면 날짜만 보여드리고, MLB이 시각을 공개하면 30분 안에 자동으로 함께 표시돼요.</p>
 </section>
 """
-    title = f"MLB 포스트시즌 대진표 - 와일드카드부터 디비전시리즈까지 | {SITE_NAME}"
+    title = "MLB 포스트시즌 대진표 - 와일드카드부터 디비전시리즈까지 시드별 대진"
     desc = "MLB 아메리칸리그·내셔널리그 포스트시즌 대진을 현재 순위 기준으로 그려서 보여드려요. 와일드카드 시리즈 확정 대진과 디비전시리즈에서 만날 수 있는 상대의 상대전적까지 확인하세요."
     return layout(title, desc, body, "/", base_url, "/", "🏆 포스트시즌 대진표", "현재 순위 기준 대진과 상대전적", kst(payload["fetchedAt"]))
 
@@ -441,7 +453,7 @@ def tournament_page(payload, base_url):
      MLB이 공개하면 자동으로 함께 표시돼요.</p>
 </section>
 """
-    title = f"MLB 포스트시즌 토너먼트 대진표 - 와일드카드부터 월드시리즈까지 | {SITE_NAME}"
+    title = "MLB 포스트시즌 토너먼트 대진표 - 와일드카드부터 월드시리즈까지"
     desc = "MLB 아메리칸리그·내셔널리그 포스트시즌 전체 토너먼트를 한 화면에서 확인하세요. 확정된 와일드카드 대진과 앞으로 채워질 자리를 함께 보여드려요."
     return layout(title, desc, body, "/tournament/", base_url, "/tournament/", "🎋 포스트시즌 토너먼트", "와일드카드부터 월드시리즈까지 한눈에",
                   kst(payload["fetchedAt"]))
