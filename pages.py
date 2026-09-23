@@ -151,6 +151,7 @@ def layout(title, desc, body, path, base_url, active="", hero_title="", hero_sub
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="sEMkgaO-KtKsTvs7tXRVVFQNi7uJSD09_yrNQtG3M_0">
+    <meta name="naver-site-verification" content="7b6d8a31c3d791a66f8b7a96e3855f8667157eb2">
     <title>{esc(title)}</title>
     <meta name="description" content="{esc(desc)}">
     {canonical}
