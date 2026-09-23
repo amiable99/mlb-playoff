@@ -1,0 +1,387 @@
+/* MLB 포스트시즌 대진표 - 스타일시트 */
+
+:root {
+    --bg: #f1f4fa;
+    --surface: #ffffff;
+    --surface-2: #f5f7fc;
+    --text: #14203a;
+    --muted: #66708f;
+    --line: #e2e6f2;
+    --brand: #b8860b;
+    --brand-soft: #fbf1da;
+    --navy-1: #0b1530;
+    --navy-2: #1b3f8a;
+    --good: #16a34a;
+    --good-soft: #e7f7ee;
+    --bad: #dc2626;
+    --bad-soft: #fdecec;
+    --shadow: 0 1px 2px rgba(10, 16, 40, .05), 0 8px 24px rgba(10, 16, 40, .06);
+    --radius: 18px;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0a0f1e;
+        --surface: #121a30;
+        --surface-2: #182140;
+        --text: #e8ecf9;
+        --muted: #96a0c2;
+        --line: #263056;
+        --brand: #eac251;
+        --brand-soft: #362a10;
+        --navy-1: #070c1c;
+        --navy-2: #16306e;
+        --good: #34d399;
+        --good-soft: #10281f;
+        --bad: #f87171;
+        --bad-soft: #341313;
+        --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+    }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+        'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 20px 16px 56px;
+}
+
+a { color: var(--navy-2); }
+@media (prefers-color-scheme: dark) { a { color: #8fb4ff; } }
+
+.container { max-width: 980px; margin: 0 auto; }
+
+header {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    border-radius: 22px;
+    padding: 28px 28px 24px;
+    margin-bottom: 18px;
+    background: linear-gradient(135deg, var(--navy-1), var(--navy-2));
+    box-shadow: 0 12px 30px rgba(11, 21, 48, .3);
+}
+
+header::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -80px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(234, 194, 81, .22), transparent 62%);
+}
+
+.brand-link { display: inline-block; margin-bottom: 6px; color: rgba(255,255,255,.85); text-decoration: none; font-size: 13px; font-weight: 700; }
+header h1 { font-size: clamp(22px, 4.6vw, 30px); font-weight: 800; letter-spacing: -.02em; position: relative; }
+header .subtitle { margin-top: 4px; opacity: .88; font-size: 15px; position: relative; }
+.updated { display: inline-block; margin-top: 14px; padding: 5px 12px; border-radius: 10px; background: rgba(0,0,0,.22); font-size: 12px; position: relative; }
+.updated span { font-weight: 700; }
+
+.site-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.site-nav a { padding: 8px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 700; }
+.site-nav a.on { background: var(--navy-2); border-color: var(--navy-2); color: #fff; }
+.site-nav a:hover { color: var(--text); }
+
+section { margin-bottom: 22px; }
+h2 { font-size: 18px; font-weight: 800; margin-bottom: 12px; letter-spacing: -.01em; }
+.prose p { margin-bottom: 10px; line-height: 1.8; }
+.note { margin-top: 10px; font-size: 12px; color: var(--muted); }
+.muted { color: var(--muted); }
+
+/* 팀 엠블럼 */
+.team-logo {
+    display: inline-grid; place-items: center; flex: none;
+    width: var(--size, 26px); height: var(--size, 26px);
+    border-radius: 50%;
+    background: var(--team, var(--navy-2));
+    color: var(--fg, #fff);
+    font-size: calc(var(--size, 26px) * .36);
+    font-weight: 800; letter-spacing: -.04em;
+    box-shadow: 0 0 0 1.5px rgba(128,138,155,.3), inset 0 -3px 6px rgba(0,0,0,.18);
+}
+.team-logo.sm { --size: 20px; }
+.team-logo.lg { --size: 40px; }
+
+/* 리그 블록 & 대진표 */
+.league-block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+.league-block h2 { margin-bottom: 16px; }
+
+.bracket { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.bracket-round { display: flex; flex-direction: column; gap: 10px; }
+.round-title { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: none; margin-bottom: 2px; }
+
+.matchup { background: var(--surface-2); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+.matchup.ds { border-color: var(--brand); }
+.mu-seed { font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 8px; }
+.mu-vs { color: var(--brand); margin: 0 2px; }
+.mu-mid { text-align: center; padding: 4px 0; }
+
+.team-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; text-decoration: none; color: var(--text); }
+.team-row:hover .tr-name { text-decoration: underline; }
+.tr-name { display: flex; flex-direction: column; font-weight: 700; font-size: 14px; line-height: 1.3; word-break: keep-all; }
+.tr-name small { font-weight: 500; color: var(--muted); font-size: 12px; }
+.bye-tag { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--brand); white-space: nowrap; }
+
+.h2h-line { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--line); color: var(--muted); }
+.h2h-line.win { background: var(--good-soft); color: var(--good); }
+.h2h-line.lose { background: var(--bad-soft); color: var(--bad); }
+
+.bye { background: var(--surface); border: 1px dashed var(--line); border-radius: 14px; padding: 6px 14px; }
+
+/* 순위표 */
+.table-scroll { overflow-x: auto; border-radius: 12px; }
+.standings-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; }
+.standings-table th { padding: 10px 12px; background: var(--surface-2); color: var(--muted); font-size: 12px; font-weight: 700; text-align: center; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.standings-table td { padding: 10px 12px; text-align: center; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.standings-table td.team-name { text-align: left; }
+.standings-table td.team-name a { display: inline-flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; font-weight: 700; }
+.standings-table tr.in-zone td:first-child { box-shadow: inset 3px 0 0 var(--brand); }
+
+/* 팀 페이지 */
+.scenario-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.stat-item { padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.stat-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+.stat-value { margin-top: 2px; font-size: 20px; font-weight: 800; }
+.stat-sub { margin-top: 2px; font-size: 12px; color: var(--muted); }
+
+.opp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.opp-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.opp-label { font-size: 12px; font-weight: 800; color: var(--muted); margin-bottom: 6px; }
+.opp-h2h { margin-top: 6px; }
+
+.chip { display: inline-block; padding: 7px 14px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 700; margin-right: 6px; }
+.chip:hover { color: var(--text); }
+
+.faq details { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.faq details:last-child { border-bottom: 0; }
+.faq summary { cursor: pointer; font-weight: 700; }
+.faq details p { margin-top: 8px; color: var(--muted); line-height: 1.7; }
+
+footer { margin-top: 32px; text-align: center; font-size: 12px; color: var(--muted); line-height: 1.8; }
+
+@media (max-width: 640px) {
+    .bracket { grid-template-columns: 1fr; }
+    .league-block { padding: 16px; }
+    header { padding: 22px 18px 20px; }
+}
+
+/* ---------- 전체 토너먼트 (대칭 대진표) ---------- */
+.tourney-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 26px 18px;
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+}
+
+.tourney {
+    display: grid;
+    grid-template-columns: 138px 116px 104px 116px 104px 116px 138px;
+    gap: 0 5px;
+    align-items: center;
+    min-width: 840px;
+}
+
+.t-col { display: flex; flex-direction: column; height: 100%; }
+.t-col-title { text-align: center; font-size: 12px; font-weight: 800; color: var(--muted); margin-bottom: 10px; }
+
+/* 라운드마다 칸이 절반씩 줄어들며 가운데로 모인다 */
+.t-round-1 { justify-content: space-around; }
+.t-round-2 { justify-content: space-around; }
+.t-round-3 { justify-content: center; }
+.t-final { justify-content: center; align-items: center; }
+
+.t-pair {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 10px 14px 10px 0;
+}
+.t-pair.mirror { padding: 10px 0 10px 14px; }
+
+/* 두 팀을 잇는 대괄호 모양 연결선 */
+.t-pair::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 14px; bottom: 14px;
+    width: 12px;
+    border-right: 2px solid var(--line);
+    border-top: 2px solid var(--line);
+    border-bottom: 2px solid var(--line);
+    border-radius: 0 6px 6px 0;
+}
+.t-pair.mirror::after {
+    right: auto; left: 0;
+    border-right: 0; border-left: 2px solid var(--line);
+    border-radius: 6px 0 0 6px;
+}
+
+.t-slot {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 8px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    text-decoration: none; color: var(--text);
+    font-size: 12px; font-weight: 700;
+    line-height: 1.3;
+    word-break: keep-all;
+}
+.t-slot .seed-no {
+    flex: none; width: 16px; height: 16px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    background: var(--line); color: var(--muted);
+    font-size: 9px; font-weight: 800;
+}
+.t-slot.tbd { color: var(--muted); font-weight: 600; border-style: dashed; background: transparent; }
+.t-slot.tbd .seed-no { visibility: hidden; }
+
+.t-final-box {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 14px 12px;
+    background: var(--brand-soft);
+    border: 1px solid var(--brand);
+    border-radius: 14px;
+}
+.t-final-box .trophy { font-size: 20px; }
+.t-final-box { padding: 12px 8px; }
+.t-final-box .t-slot { width: 100%; justify-content: center; }
+.t-final-title { font-size: 11px; font-weight: 800; color: var(--brand); }
+
+@media (max-width: 900px) {
+    .tourney-wrap { padding: 18px 12px; }
+}
+
+/* 라운드 날짜 표시 */
+.round-title .round-date, .t-col-title .round-date {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+}
+.t-final-box .round-date {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--brand);
+    margin-bottom: 2px;
+}
+
+/* ---------- 가이드 목록 ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+}
+
+.team-card {
+    display: block;
+    padding: 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.team-card:hover { border-color: var(--navy-2); }
+.tc-sub { margin-top: 6px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ---------- 한국인 선수 페이지 ---------- */
+.kr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+}
+
+.kr-card {
+    background: var(--surface);
+    border: 1px solid var(--brand);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+}
+
+.kr-card-head { margin-bottom: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.kr-card-head .team-row { padding: 0; }
+
+.chip-set, .chip-pending {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.chip-set { background: var(--brand); color: #fff; }
+.chip-pending { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+
+.kr-players {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+}
+
+.player-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.player-meta { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+.player-status {
+    margin-top: 2px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--brand);
+}
+
+/* ---------- 팀 페이지 전체 로스터 ---------- */
+.roster-wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+}
+
+.roster-group h3 {
+    font-size: 15px;
+    margin: 0 0 8px;
+    color: var(--muted);
+}
+
+.roster-count { font-weight: 400; color: var(--muted); font-size: 13px; }
+
+.roster-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.roster-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 14px;
+    padding: 6px 10px;
+    background: var(--surface-2);
+    border-radius: 8px;
+}
+
+.roster-name { font-weight: 600; }
+.roster-row .player-status { margin: 0 0 0 4px; }
