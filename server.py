@@ -13,6 +13,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 import bracket
 import pages
+import pages_en
 
 CACHE_SECONDS = 1800       # 순위는 하루 몇 번만 바뀌므로 30분 재사용으로 충분하다
 STALE_MAX_SECONDS = 3600 * 6  # 조회가 실패하면 최대 6시간 전 데이터를 대신 보여준다
@@ -99,21 +100,21 @@ class Handler(SimpleHTTPRequestHandler):
                 self._send_json({"ok": False, "error": str(e)}, status=502)
             return
 
-        if path == "/sitemap.xml" or pages.is_page(path):
+        if path == "/sitemap.xml" or pages.is_page(path) or pages_en.is_page(path):
             try:
                 payload = get_payload()
             except Exception:
                 self._send_html(503, self._fallback_page("잠시 후 다시 시도해 주세요", "대진 데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.", path, base))
                 return
             if path == "/sitemap.xml":
-                body = pages.sitemap(base, payload).encode()
+                body = pages.sitemap(base, payload, extra_urls=pages_en.sitemap_urls(payload)).encode()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/xml; charset=utf-8")
                 self.send_header("Content-Length", str(len(body)))
                 self.end_headers()
                 self.wfile.write(body)
                 return
-            result = pages.render(path, base, payload)
+            result = pages_en.render(path, base, payload) if pages_en.is_page(path) else pages.render(path, base, payload)
             if result is None or result[1] is None:
                 self._send_html(404, self._fallback_page("페이지를 찾을 수 없어요", "주소를 다시 확인해 주세요.", path, base))
                 return

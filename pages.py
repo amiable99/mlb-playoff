@@ -130,9 +130,14 @@ def date_range_text(rng):
     return text
 
 
-def layout(title, desc, body, path, base_url, active="", hero_title="", hero_sub="", updated=""):
+def layout(title, desc, body, path, base_url, active="", hero_title="", hero_sub="", updated="", alt_en=None):
     canonical = f'<link rel="canonical" href="{esc(base_url + path)}">' if base_url else ""
     og_url = f'<meta property="og:url" content="{esc(base_url + path)}">' if base_url else ""
+    hreflang = ""
+    if base_url and alt_en:
+        hreflang = (f'<link rel="alternate" hreflang="ko" href="{esc(base_url + path)}">'
+                    f'<link rel="alternate" hreflang="en" href="{esc(base_url + alt_en)}">'
+                    f'<link rel="alternate" hreflang="x-default" href="{esc(base_url + path)}">')
     nav = "".join(f'<a href="{href}"{" class=on" if href == active else ""}>{esc(label)}</a>' for href, label in NAV)
     upd = f'<p class="updated">기준 시각 <span>{esc(updated)}</span></p>' if updated else ""
     json_ld = ""
@@ -155,7 +160,9 @@ def layout(title, desc, body, path, base_url, active="", hero_title="", hero_sub
     <title>{esc(title)}</title>
     <meta name="description" content="{esc(desc)}">
     {canonical}
+    {hreflang}
     <meta property="og:type" content="website">
+    <meta property="og:locale" content="ko_KR">
     <meta property="og:site_name" content="{esc(SITE_NAME)}">
     <meta property="og:title" content="{esc(title)}">
     <meta property="og:description" content="{esc(desc)}">
@@ -179,7 +186,7 @@ def layout(title, desc, body, path, base_url, active="", hero_title="", hero_sub
         <footer>
             <p>© 2026 {esc(SITE_NAME)} | 시즌 순위를 바탕으로 만든 포스트시즌 대진 예상 도구</p>
             <p>순위·경기 데이터 출처: MLB Stats API (조회 결과를 30분 동안 재사용) · <a href="/about/">사이트 소개</a> · <a href="/privacy.html">개인정보처리방침</a></p>
-            <p>본 사이트는 MLB 및 각 구단과 관련이 없는 비공식 사이트입니다.</p>
+            <p>본 사이트는 MLB 및 각 구단과 관련이 없는 비공식 사이트입니다. <a href="/en/">English</a></p>
         </footer>
     </div>
 </body>
@@ -266,7 +273,8 @@ def home_page(payload, base_url):
 """
     title = "MLB 포스트시즌 대진표 - 와일드카드부터 디비전시리즈까지 시드별 대진"
     desc = "MLB 아메리칸리그·내셔널리그 포스트시즌 대진을 현재 순위 기준으로 그려서 보여드려요. 와일드카드 시리즈 확정 대진과 디비전시리즈에서 만날 수 있는 상대의 상대전적까지 확인하세요."
-    return layout(title, desc, body, "/", base_url, "/", "🏆 포스트시즌 대진표", "현재 순위 기준 대진과 상대전적", kst(payload["fetchedAt"]))
+    return layout(title, desc, body, "/", base_url, "/", "🏆 포스트시즌 대진표", "현재 순위 기준 대진과 상대전적",
+                  kst(payload["fetchedAt"]), alt_en="/en/")
 
 
 def standings_note(t):
@@ -298,7 +306,7 @@ def league_page(lg, payload, base_url):
     return layout(f"{LEAGUE_KO[lg]} 포스트시즌 대진 · 순위 | {SITE_NAME}",
                   f"{LEAGUE_KO[lg]} 포스트시즌 대진과 전체 순위를 확인하세요.",
                   body, f"/{lg.lower()}/", base_url, f"/{lg.lower()}/", f"🏆 {esc(LEAGUE_KO[lg])}", "포스트시즌 대진과 순위",
-                  kst(payload["fetchedAt"]))
+                  kst(payload["fetchedAt"]), alt_en=f"/en/{lg.lower()}/")
 
 
 def roster_group_rows(players):
@@ -393,7 +401,7 @@ def team_page(abbr, lg, payload, base_url):
     desc = f'{info["ko"]}({esc(LEAGUE_KO[lg])} {seed_no}시드)이 포스트시즌에서 만날 수 있는 상대와 이번 시즌 상대전적을 확인하세요.'
     return layout(title, desc, body, team_url(abbr), base_url, f"/{lg.lower()}/",
                   f'{logo(abbr, "lg")} {esc(info["ko"])}', f'{esc(LEAGUE_KO[lg])} {seed_no}시드 · {team["wins"]}승 {team["losses"]}패',
-                  kst(payload["fetchedAt"]))
+                  kst(payload["fetchedAt"]), alt_en=f"/en/team/{abbr.lower()}/")
 
 
 def t_slot(team=None, seed=None, tbd=None):
@@ -458,7 +466,7 @@ def tournament_page(payload, base_url):
     title = "MLB 포스트시즌 토너먼트 대진표 - 와일드카드부터 월드시리즈까지"
     desc = "MLB 아메리칸리그·내셔널리그 포스트시즌 전체 토너먼트를 한 화면에서 확인하세요. 확정된 와일드카드 대진과 앞으로 채워질 자리를 함께 보여드려요."
     return layout(title, desc, body, "/tournament/", base_url, "/tournament/", "🎋 포스트시즌 토너먼트", "와일드카드부터 월드시리즈까지 한눈에",
-                  kst(payload["fetchedAt"]))
+                  kst(payload["fetchedAt"]), alt_en="/en/tournament/")
 
 
 POSITION_KO = {
@@ -544,15 +552,17 @@ def guide_hub_page(base_url):
 <section><div class="team-grid">{cards}</div></section>
 """
     return layout(f"MLB 포스트시즌 가이드 | {SITE_NAME}", "MLB 포스트시즌 경기 방식, 시드 규정을 쉽게 설명하는 가이드 모음.",
-                  body, "/guide/", base_url, "/guide/", "📖 가이드", "포스트시즌 규정 쉽게 알아보기")
+                  body, "/guide/", base_url, "/guide/", "📖 가이드", "포스트시즌 규정 쉽게 알아보기", alt_en="/en/guide/")
 
 
 def guide_page(slug, base_url):
     g = GUIDES[slug]
     others = "".join(f'<a class="chip" href="/guide/{s}/">{esc(o["title"])}</a>' for s, o in GUIDES.items() if s != slug)
     body = g["html"] + (f'<section><h2>다른 가이드</h2><div class="chips">{others}</div></section>' if others else "")
+    from pages_en import GUIDES_EN
+    alt_en = f"/en/guide/{slug}/" if slug in GUIDES_EN else None
     return layout(f'{g["title"]} | {SITE_NAME}', g["desc"], body, f"/guide/{slug}/", base_url, "/guide/",
-                  esc(g["title"]), "MLB 포스트시즌 가이드")
+                  esc(g["title"]), "MLB 포스트시즌 가이드", alt_en=alt_en)
 
 
 def about_page(base_url):
@@ -573,7 +583,7 @@ def about_page(base_url):
      순위 데이터는 MLB Stats API에서 30분마다 새로 가져와요. 실제 대진과 일정은 MLB 공식 사이트에서 확인하세요.</p>
 </section>"""
     return layout(f"사이트 소개 | {SITE_NAME}", f"{SITE_NAME}의 대진 계산 방식과 데이터 출처를 소개해요.", body, "/about/", base_url,
-                  "/about/", "ℹ️ 사이트 소개", "대진 계산 방식과 데이터 출처")
+                  "/about/", "ℹ️ 사이트 소개", "대진 계산 방식과 데이터 출처", alt_en="/en/about/")
 
 
 PAGE_PREFIXES = ("/al", "/nl", "/team/", "/about", "/tournament", "/guide", "/korean-players")
@@ -609,11 +619,16 @@ def render(path, base_url, payload):
     return None
 
 
-def sitemap(base_url, payload):
+def sitemap_urls(payload):
     urls = ["/", "/tournament/", "/korean-players/", "/al/", "/nl/", "/guide/", "/about/", "/privacy.html"]
     urls += [f"/guide/{s}/" for s in GUIDES]
     for lg in ("AL", "NL"):
         urls += [team_url(t["abbr"]) for t in payload["leagues"][lg]["seeds"].values()]
+    return urls
+
+
+def sitemap(base_url, payload, extra_urls=None):
+    urls = sitemap_urls(payload) + (extra_urls or [])
     today = datetime.date.today().isoformat()
     body = "".join(f"<url><loc>{esc(base_url + u)}</loc><lastmod>{today}</lastmod></url>" for u in urls)
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{body}</urlset>'
