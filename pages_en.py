@@ -9,7 +9,7 @@ instead of touching bracket.py.
 import datetime
 from zoneinfo import ZoneInfo
 
-from pages import esc, logo, round_title, t_pair, t_col_title, ROSTER_STATUS_KO  # noqa: F401 (ROSTER_STATUS_KO unused, kept for parity)
+from pages import ADS_SCRIPT, GA_SCRIPT, esc, logo, round_title, t_pair, t_col_title, ROSTER_STATUS_KO  # noqa: F401 (ROSTER_STATUS_KO unused, kept for parity)
 from teams import DIVISION_EN, LEAGUE_EN, TEAM_INFO
 
 SITE_NAME_EN = "MLB Postseason Bracket"
@@ -175,7 +175,8 @@ def layout_en(title, desc, body, path, base_url, alt_ko, active="", hero_title="
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
     <link rel="stylesheet" href="/static/style.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5559949155901841" crossorigin="anonymous"></script>
+    {ADS_SCRIPT}
+    {GA_SCRIPT}
 </head>
 <body>
     <div class="container">

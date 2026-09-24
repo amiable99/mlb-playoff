@@ -13,6 +13,13 @@ SITE_NAME = "MLB 포스트시즌 대진표"
 SITE_TZ = datetime.timezone(datetime.timedelta(hours=9))
 ADS_SCRIPT = ('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'
               '?client=ca-pub-5559949155901841" crossorigin="anonymous"></script>')
+GA_SCRIPT = """<script async src="https://www.googletagmanager.com/gtag/js?id=G-MCEVP4WT8D"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-MCEVP4WT8D');
+    </script>"""
 
 ROUND_LABEL = {"wc": "와일드카드 시리즈 (3전 2선승제)", "ds": "디비전시리즈에서 만날 수 있는 상대 (5전 3선승제)"}
 
@@ -172,6 +179,7 @@ def layout(title, desc, body, path, base_url, active="", hero_title="", hero_sub
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
     <link rel="stylesheet" href="/static/style.css">
     {ADS_SCRIPT}
+    {GA_SCRIPT}
 </head>
 <body>
     <div class="container">
