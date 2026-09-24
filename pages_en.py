@@ -303,7 +303,7 @@ def league_page_en(lg, payload, base_url):
   <p class="note">The top 6 teams (highlighted) make the postseason.</p>
 </section>
 """
-    return layout_en(f"{LEAGUE_EN[lg]} Postseason Bracket &amp; Standings | {SITE_NAME_EN}",
+    return layout_en(f"{LEAGUE_EN[lg]} Postseason Bracket & Standings | {SITE_NAME_EN}",
                       f"See the {LEAGUE_EN[lg]} postseason bracket and full standings.",
                       body, f"/en/{lg.lower()}/", base_url, f"/{lg.lower()}/", f"/en/{lg.lower()}/",
                       f"🏆 {esc(LEAGUE_EN[lg])}", "Bracket and standings", updated_en(payload["fetchedAt"]))
@@ -394,7 +394,7 @@ def team_page_en(abbr, lg, payload, base_url):
 <section>{faq_html and f'<h2>FAQ</h2><div class="faq">{faq_html}</div>'}</section>
 <section><h2>Back to {esc(LEAGUE_EN[lg])} Bracket</h2><p><a class="chip" href="/en/{lg.lower()}/">Full {esc(LEAGUE_EN[lg])} Bracket</a> <a class="chip" href="/en/">Full Bracket</a></p></section>
 """
-    title = f"{info['en']} Postseason Opponents &amp; Roster | {SITE_NAME_EN}"
+    title = f"{info['en']} Postseason Opponents & Roster | {SITE_NAME_EN}"
     desc = f'See who the {info["en"]} ({esc(LEAGUE_EN[lg])} #{seed_no} seed) could face in the postseason, the season series record, and their full roster.'
     return layout_en(title, desc, body, team_url(abbr), base_url, f"/team/{abbr.lower()}/", f"/en/{lg.lower()}/",
                       f'{logo(abbr, "lg")} {esc(info["en"])}', f'{esc(LEAGUE_EN[lg])} #{seed_no} seed · {team["wins"]}-{team["losses"]}',
