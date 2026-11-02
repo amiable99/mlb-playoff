@@ -14,6 +14,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import bracket
 import pages
 import pages_en
+import teams
 
 CACHE_SECONDS = 1800       # 순위는 하루 몇 번만 바뀌므로 30분 재사용으로 충분하다
 STALE_MAX_SECONDS = 3600 * 6  # 조회가 실패하면 최대 6시간 전 데이터를 대신 보여준다
@@ -45,7 +46,54 @@ def get_payload():
         return fresh
 
 
+NEW_SITE = "https://sportsmagicnum.com"
+NEW_BASE = NEW_SITE + "/mlb"
+
+# 새 사이트(sportsmagicnum.com/mlb/)에 같은 페이지가 있는 옛 주소 (끝 슬래시 없는 형태, 앞의 /en 은 따로 처리)
+REDIRECT_SECTIONS = {"tournament", "al", "nl", "guide", "about", "korean-players"}
+REDIRECT_GUIDES = {"round-format"}
+
+
+def new_site_target(raw_path):
+    """옛 주소 하나를 새 사이트 주소로 바꾼다. 대응 페이지가 없으면 /mlb/ 로 보낸다. 쿼리스트링은 버린다."""
+    path = raw_path.split("?")[0].split("#")[0]
+    if path in ("/sitemap.xml", "/ads.txt"):
+        return NEW_SITE + path
+    if path == "/privacy.html":
+        return NEW_SITE + "/privacy/"
+    if path.startswith("/static/"):
+        return NEW_BASE + path
+    if path == "/api/bracket":
+        return NEW_BASE + "/api/bracket"
+    parts = [p for p in path.split("/") if p]
+    prefix = ""
+    if parts and parts[0] == "en":
+        prefix, parts = "/en", parts[1:]
+    if not parts:
+        return NEW_BASE + prefix + "/"
+    head = parts[0]
+    if head in REDIRECT_SECTIONS and len(parts) == 1:
+        if prefix and head == "korean-players":  # 영어판에는 없음
+            return NEW_BASE + "/en/"
+        return f"{NEW_BASE}{prefix}/{head}/"
+    if head == "team" and len(parts) == 2 and parts[1].lower() in {a.lower() for a in teams.TEAM_INFO}:
+        return f"{NEW_BASE}{prefix}/team/{parts[1].lower()}/"
+    if head == "guide" and len(parts) == 2 and parts[1] in REDIRECT_GUIDES:
+        return f"{NEW_BASE}{prefix}/guide/{parts[1]}/"
+    return NEW_BASE + "/"
+
+
 class Handler(SimpleHTTPRequestHandler):
+    def _redirect_to_new_site(self):
+        """이 사이트는 sportsmagicnum.com/mlb/ 로 옮겼다. 모든 주소를 새 사이트의 같은 페이지로 영구 이동시킨다."""
+        self.send_response(301)
+        self.send_header("Location", new_site_target(self.path))
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    def do_HEAD(self):
+        self._redirect_to_new_site()
+
     def end_headers(self):
         if not self.path.startswith("/api/"):
             self.send_header("Cache-Control", "no-cache")
@@ -83,6 +131,9 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         path = self.path.split("?")[0]
         base = self._base_url()
+        if path != "/robots.txt":
+            self._redirect_to_new_site()
+            return
 
         if path == "/robots.txt":
             body = f"User-agent: *\nAllow: /\nSitemap: {base}/sitemap.xml\n".encode()
